@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Train Passenger QR Code Generator and Passengers List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .buttons-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"],
+        input[type="email"],
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #ff69b4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            display: flex;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff4785;
+        }
+        #qrcode {
+            display: none;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+        ul li {
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            max-width: 800px; /* Adjust this value as needed */
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+        }
+        .overlay {
+	background: #FF416C;
+	background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
+	background: linear-gradient(to right, #FF4B2B, #FF416C);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: 0 0;
+	color: #FFFFFF;
+	position: relative;
+	left: -100%;
+	height: 100%;
+	width: 200%;
+}
+        
+    </style>
+</head>
+<body>
+    <div class="container" id="generatorSection">
+        <h1>Train Passenger QR Code Generator</h1>
+        <input type="text" id="nameInput" placeholder="Enter your name">
+        <input type="text" id="aadhaarInput" placeholder="Enter 12-digit Aadhaar number">
+        <input type="email" id="emailInput" placeholder="Enter your email">
+        <select id="genderInput">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+        <input type="number" id="ageInput" placeholder="Enter your age">
+        <select id="compartmentInput">
+            <option value="1A">1A</option>
+            <option value="2A">2A</option>
+            <option value="3A">3A</option>
+            <option value="4A">4A</option>
+            <option value="5A">5A</option>
+        </select>
+        <input type="text" id="trainRouteInput" placeholder="Enter Train Route Address">
+        
+        <button onclick="generateQRCode()" class="buttons">Generate QR Code</button>
+        <button onclick="printQRCode()" class="buttons">Print QR Code</button>
+        <button onclick="toggleView()" class="buttons">View Passengers List</button>
+       
+        <br>
+        
+        <div id="qrcode"></div>
+</div>
+    <div class="container" id="passengersSection" style="display: none;">
+        <h1>Passengers List</h1>
+        <table id="passengersTable">
+            <tr>
+                <th>Name</th>
+                <th>Compartment</th>
+                <th>Age</th>
+                <th>Aadhaar</th>
+                <th>Email</th>
+                <th>Train Route</th>
+            </tr>
+        </table>
+        <button onclick="toggleView()">Go Back</button>
+    </div>
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+        function generateQRCode() {
+            var name = document.getElementById("nameInput").value;
+            var compartment = document.getElementById("compartmentInput").value;
+            var age = document.getElementById("ageInput").value;
+            var aadhaar = document.getElementById("aadhaarInput").value;
+            var email = document.getElementById("emailInput").value;
+            var trainRoute = document.getElementById("trainRouteInput").value;
+
+            var data = "Name: " + name + "\nCompartment: " + compartment + "\nAge: " + age +
+                       "\nAadhaar: " + aadhaar + "\nEmail: " + email + "\nTrain Route: " + trainRoute;
+
+            var qrcodeDiv = document.getElementById("qrcode");
+            qrcodeDiv.innerHTML = "";
+            var qrcode = new QRCode(qrcodeDiv, {
+                text: data,
+                width: 128,
+                height: 128
+            });
+            qrcodeDiv.style.display = "block";
+
+        
+            var table = document.getElementById("passengersTable");
+            var newRow = table.insertRow(-1);
+
+            var nameCell = newRow.insertCell(0);
+            var compartmentCell = newRow.insertCell(1);
+            var ageCell = newRow.insertCell(2);
+            var aadhaarCell = newRow.insertCell(3);
+            var emailCell = newRow.insertCell(4);
+            var trainRouteCell = newRow.insertCell(5);
+
+            nameCell.innerHTML = name;
+            compartmentCell.innerHTML = compartment;
+            ageCell.innerHTML = age;
+            aadhaarCell.innerHTML = aadhaar;
+            emailCell.innerHTML = email;
+            trainRouteCell.innerHTML = trainRoute;
+        }
+
+        function printQRCode() {
+            window.print();
+        }
+
+        function toggleView() {
+            var generatorSection = document.getElementById("generatorSection");
+            var passengersSection = document.getElementById("passengersSection");
+
+            if (generatorSection.style.display === "none") {
+                generatorSection.style.display = "block";
+                passengersSection.style.display = "none";
+            } else {
+                generatorSection.style.display = "none";
+                passengersSection.style.display = "block";
+            }
+        }
+        function populatePassengersList() {
+            var passengers = JSON.parse(localStorage.getItem("passengers") || "[]");
+            var passengersList = document.getElementById("passengersList");
+            passengersList.innerHTML = "";
+
+            passengers.forEach(passenger => {
+                var listItem = document.createElement("li");
+                listItem.textContent = `Name: ${passenger.name}, Aadhaar: ${passenger.aadhaar}, Gender: ${passenger.gender}, Age: ${passenger.age}, Email: ${passenger.email}`;
+                passengersList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
+
+

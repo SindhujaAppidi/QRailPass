@@ -1,0 +1,17 @@
+Servlet Context
+Represents the entire web application.
+Created by the servlet container when the web application is deployed.
+Destroyed when the web application is undeployed.
+Shared by all servlets in the same web application.
+Used for storing global information, such as context parameters.
+Useful for communication between servlets.
+
+
+
+Servlet Config
+Represents configuration information for a specific servlet.
+Created by the servlet container for each servlet during its initialization.
+No specific destruction mechanism (typically not explicitly destroyed).
+Limited to a specific servlet.
+Used for retrieving initialization parameters for a servlet.
+Provides access to servlet-specific configuration.

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Train Passenger QR Code Generator and Passengers List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .buttons { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="email"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            display: flex;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #qrcode {
+            display: none;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+        ul li {
+            margin-bottom: 10px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container" id="generatorSection">
+        <h1>Train Passenger QR Code Generator</h1>
+        <input type="text" id="nameInput" placeholder="Enter your name">
+        <input type="text" id="aadhaarInput" placeholder="Enter 12-digit Aadhaar number">
+        <input type="email" id="emailInput" placeholder="Enter your email">
+        <select id="genderInput">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+        <input type="number" id="ageInput" placeholder="Enter your age">
+        <button onclick="generateQRCode()" class="buttons">Generate QR Code</button>
+        <button onclick="printQRCode()" class="buttons">Print QR Code</button>
+        <button onclick="toggleView()" class="buttons">View Passengers List</button>
+        <br>
+        <div id="qrcode"></div>
+    </div>
+
+    <div class="container" id="passengersSection" style="display: none;">
+        <h1>Passengers List</h1>
+        <ul id="passengersList"></ul>
+        <button onclick="toggleView()">Go Back</button>
+    </div>
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script>
+             function generateQRCode() {
+            var name = document.getElementById("nameInput").value;
+            var aadhaar = document.getElementById("aadhaarInput").value;
+            var email = document.getElementById("emailInput").value;
+            var gender = document.getElementById("genderInput").value;
+            var age = document.getElementById("ageInput").value;
+
+            if (aadhaar.length !== 12) {
+                alert("Please enter a valid 12-digit Aadhaar number.");
+                return;
+            }
+
+            var data = "Name: " + name + "\nAadhaar Number: " + aadhaar + "\nGender: " + gender + "\nAge: " + age;
+            var qrcodeDiv = document.getElementById("qrcode");
+            qrcodeDiv.innerHTML = "";
+            var qrcode = new QRCode(qrcodeDiv, {
+                text: data,
+                width: 128,
+                height: 128
+            });
+            qrcodeDiv.style.display = "block";
+
+            
+            var passengers = JSON.parse(localStorage.getItem("passengers") || "[]");
+            passengers.push({ name, aadhaar, gender, age, email });
+            localStorage.setItem("passengers", JSON.stringify(passengers));
+
+           
+            sendEmail(email, qrcode);
+        }
+
+        function sendEmail(email, qrcode) {
+            // Simulate sending email (Replace with actual backend code)
+            console.log("Email sent to: " + email);
+        }
+
+        function printQRCode() {
+            window.print();
+        }
+
+        function toggleView() {
+            var generatorSection = document.getElementById("generatorSection");
+            var passengersSection = document.getElementById("passengersSection");
+
+            if (generatorSection.style.display === "none") {
+                generatorSection.style.display = "block";
+                passengersSection.style.display = "none";
+            } else {
+                generatorSection.style.display = "none";
+                passengersSection.style.display = "block";
+                populatePassengersList();
+            }
+        }
+
+        function populatePassengersList() {
+            var passengers = JSON.parse(localStorage.getItem("passengers") || "[]");
+            var passengersList = document.getElementById("passengersList");
+            passengersList.innerHTML = "";
+
+            passengers.forEach(passenger => {
+                var listItem = document.createElement("li");
+                listItem.textContent = `Name: ${passenger.name}, Aadhaar: ${passenger.aadhaar}, Gender: ${passenger.gender}, Age: ${passenger.age}, Email: ${passenger.email}`;
+                passengersList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
+
